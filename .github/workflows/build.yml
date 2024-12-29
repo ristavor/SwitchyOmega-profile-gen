@@ -2,7 +2,7 @@ name: Build and Publish Profiles
 
 on:
   schedule:
-    - cron: "0 22 * * *" # Ежедневно в 22:00
+    - cron: "30 22 * * 4" # Ежедневно в 22:00
   workflow_dispatch:
 
 jobs:
