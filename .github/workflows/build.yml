@@ -11,33 +11,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Set variables
-        run: |
-          echo "RELEASE_NAME=profiles" >> $GITHUB_ENV
-          echo "TAG_NAME=profiles" >> $GITHUB_ENV
-        shell: bash
-
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Generate Profiles
-        run: |
-          mkdir -p ./publish
-          # Генерация файлов профилей
-          echo "# Example Profile 1" > ./publish/profile1.txt
-          echo "*://*.example1.com/*" >> ./publish/profile1.txt
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+          cache-dependency-path: ./go.sum
 
-          echo "# Example Profile 2" > ./publish/profile2.txt
-          echo "*://*.example2.com/*" >> ./publish/profile2.txt
+      - name: Build and Generate Profiles
+        run: |
+          mkdir -p ./results
+
+          # Генерация ru-blocked профиля
+          go run main.go
         shell: bash
 
-      - name: Upload files to GitHub Release
+      - name: Upload Generated Profiles to GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ env.TAG_NAME }}
-          name: ${{ env.RELEASE_NAME }}
+          tag_name: profiles
+          name: profiles
           files: |
-            ./publish/profile1.txt
-            ./publish/profile2.txt
+            ./results/ru-blocked.txt
+            ./results/except-ru.txt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
